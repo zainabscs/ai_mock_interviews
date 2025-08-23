@@ -1,0 +1,592 @@
+firstly installed npx next.js
+then clearede frevicon and updated globals.css
+written rafce page.tsx
+WHY PAGE.TSX? Jab bhi aap app/ folder ke andar ek folder banate ho, aur uske andar page.tsx file rakhte ho, to Next.js automatically use ek page route ke tor pe treat karta hai.
+page.tsx ek React component export karti hai (usually default export).
+
+Jo bhi aap isme return karte ho (JSX), wahi browser pe render hota hai.
+// app/page.tsx
+export default function Home() {
+  return <h1>Welcome to my website!</h1>;
+}
+then layout.tsx me language or classname dark add on ki ha
+By implemeting dark in html tag in layout.tsx we ensures that afterwards when we will apply tailwind css and import components from librarries like shadcn which supports both light and dark themes will not disrupt the dar theme styling when users will toggle in other modes
+----------
+adding shadcn to our project
+--------
+just delt out the original public folder and moved pictures wala folder in our this public folder and added favicon to app folder and shifting constants and types folders to the root directory
+
+-----------
+WHATS LAYOUT.TSX? Socho tumhe har page pe ek Navbar, Sidebar, Footer chahiye.
+                  Agar tum ye har page.tsx me likhne lagoge to code duplicate hoga.
+
+                  Is liye Next.js me layout.tsx hota hai jo us folder ke sare pages ke around wrap ho jata hai.
+                  ---------------
+ okay brooo ab mene bas thora bht files ko arrange kiaaa tha or usk bad globals.css ko dekha uska pattern lagany ki koshish ki lkn laga nai beech me npx tailwind-animate bhi kia install
+ or
+ ---------------------
+  npx shadcn@latest add button form input sonner
+  now see documentation to add form from shadcn
+  ------------
+  okay broo to bhai youtube wally bhai k anusaaar  form waaaly yaani AuthForm code  me bht si changes ki gai which were most of the things relevant to me lkn usk badye zod wod ki koi khichdi pakai gai ha isko zara me thora elaborate kar deti hun
+-----------
+okayyy to abhi kch zruri code ko smkjhny lagii hun ha to isme bht gand mand but anyways i have decided to learn that part of thye code btw it is from the file "FormField.tsx"
+1-FormControl, FormItem ... → shadcn/ui ke form components hain. Ye UI building blocks hain: label, input box, error message, description, etc...ye jo uper import waali statements han
+2-
+interface FormFieldProps<T extends FieldValues>{
+     control: Control<T>;
+     name: Path<T>;
+     label: string;
+     placeholder?: string;
+     type?: 'text'|'email'|'password'|'file';
+}
+Story version:
+
+Factory ne decide kiya: har field ka ek blueprint hoga → props.
+
+Ye blueprint batata hai ki input box kaunse magical helpers se kaam karega.
+
+Programming perspective:
+
+Ye interface contract hai → koi bhi developer ya component jo FormField use kare, compile-time pe pata chale kya props pass karne hain.
+
+3️⃣ Declaring the Magical Citizen (Component)
+ts
+Copy
+Edit
+const FormField = ({ control, name, label, placeholder, type="text" }: FormFieldProps<T>) => (
+Story version:
+
+FormField ek citizen (Input box) ko declare karta hai jo manager se baat karega.
+
+Destructuring props → citizen ko pata chal gaya ki name, label, placeholder, type kya hai.
+
+Programming perspective:
+
+Ye ek functional component hai.
+
+type="text" → default value agar user pass na kare.
+
+4️⃣ Magical Bridge (Controller)
+ts
+Copy
+Edit
+<Controller
+    name={name}
+    control={control}
+    render={({ field }) => (
+Story version:
+
+Citizen apni information manager tak bhejne ke liye Controller bridge use karta hai.
+
+Bridge ensure karta hai ki value, onChange, onBlur manager tak safely pahunch jaye.
+
+Programming perspective:
+
+React-hook-form ka Controller input ko form state se connect karta hai.
+
+render={({ field }) => ...} → bridge ke pass input ke handlers aur value aa jaate hain.
+
+5️⃣ Citizen’s Workstation (FormItem & Input)
+ts
+Copy
+Edit
+<FormItem>
+    <FormLabel className="label">Username</FormLabel>
+    <FormControl>
+        <Input placeholder="shadcn" {...field} />
+    </FormControl>
+    <FormDescription>This is your public display name.</FormDescription>
+    <FormMessage />
+</FormItem>
+Story version:
+
+Citizen (Input) apna desk set karta hai:
+
+Label wizard batata hai “Username”
+
+Input box citizen type kare
+
+Description wizard hint deta
+
+Error fairy turant errors show kare
+
+Programming perspective:
+
+UI structure → Label + Input + Description + Error
+
+{...field} → value, onChange, onBlur automatically spread hote hain
+---------------------------------------------------------
+---------------------------------------------------------
+---------------------------------------------------------
+OKAY BROO YAHAN PE PROPS WALA CONCEPT
+Parent component = Restaurant ka chef 👨‍🍳
+
+Child component = Waiter jo customer ko khana serve karta hai 🍽️
+
+Props = Tray jisme chef waiter ko items deta hai.
+
+👉 Matlab: Chef (parent) bolta hai:
+
+“Waiter, customer ko Pizza aur Coke serve karna.”
+
+Waiter (child) bolega:
+
+“Okay boss, mujhe tray me pizza aur coke mile, mai automatically customer ko de dunga.”
+
+Isi tarah React me:
+
+Parent component props deta hai (values/data).
+
+Child component wo props destructure karke directly use kar leta hai.
+
+⚡ Syntax Breakdown with Your Files
+Step 1: Props declare karna (child file)
+
+Child file hoti hai → yahan tum define karte ho ki child kaunsa tray items expect karega.
+
+Example: FormField.tsx
+
+interface FormFieldProps<T extends FieldValues>{
+  control: Control<T>;
+  name: Path<T>;
+  label: string;
+  placeholder?: string;
+  type?: 'text'|'email'|'password'|'file'
+}
+
+const FormField = ({ control, name, label, placeholder, type="text" }: FormFieldProps<T>) => (
+   ...
+)
+
+
+👉 Isme tumne declare kiya:
+
+"FormField waiter hai, aur wo tray me expect karega: control, name, label, placeholder, type.”
+
+Aur curly braces { control, name, ... } se tumne destructuring karke directly tray ke andar ke items le liye.
+
+Agar destructuring na karo to likhna padta:
+
+const FormField = (props: FormFieldProps<T>) => {
+   props.label
+   props.type
+   props.placeholder
+}
+
+
+But destructuring se shortcut ban gaya.
+
+Step 2: Props pass karna (parent file)
+
+Parent hota hai → yahan tum actual data bhejte ho.
+
+Example: AuthForm.tsx
+
+<FormField
+  control={form.control}
+  name="email"
+  label="Email"
+  placeholder="Your email address"
+  type="email"
+/>
+
+
+👉 Yahan parent ne child ko tray diya:
+
+control = form.control
+
+name = "email"
+
+label = "Email"
+
+placeholder = "Your email address"
+
+type = "email"
+
+Step 3: Props ka use child file me
+
+Ab FormField.tsx me waiter ne tray khol ke items use kiye:
+
+<FormLabel className="label">{label}</FormLabel>
+<Input placeholder={placeholder} type={type} {...field} />
+
+
+👉 Matlab:
+
+{label} → agar parent ne "Email" bheja hai, to yahan pe automatically "Email" dikh jayega.
+
+{placeholder} → "Your email address" replace ho jayega.
+
+{type} → "email" ban jayega.
+-----------------
+okay broo to usk badd coding was pretty much understanding as it was most of the frontend coding on which i am not going to spend much time now .Most of the things in the code were taken from the video so i would suggest you to watch then video after it til 1 hour 20 mins after settling upthe authform and formfield .tsx thyen i went towards the page.tsx in the root directory .it was all relevant to frontend .just to customize out the interview cards section
+--------
+
+separate interviewCard.tsx is been made and DisplaytechIcons is been called in that file and otherthan that In constants folder to render tech details and logos Inside constants folder index.ts is been used and basically inside lib in utils.ts functions have been written to render these and these functions have been used in InterviewCard.tsx
+
+------------------
+okay brooo so now i have started firebase .Google ka ek Backend-as-a-Service (BaaS) platform hai.Iska matlab: tumhe apna backend server, database, authentication system, hosting, waghera manually build nahi karna padta → Firebase tumhe ready-made tools de deta hai.
+SDK (Software Development Kit) basically ek toolbox / package hota hai jo kisi specific technology ko tumhare app me use karna aasaan bana deta hai.
+Auth SDK = delivery boy jo tumhe "login / logout" ready bana kar laata hai.
+Firestore SDK = delivery boy jo tumhe "database se data read/write" karwa deta hai bina tumhe database ka pura complex system samjhne ki zarurat.
+Storage SDK = delivery boy jo tumhe images/files upload + download karwa deta hai easily.
+-------------------------
+Firebase ke do tarah ke SDKs hote hain:
+Client SDKs
+Ye tum frontend (React, Next.js, mobile app, etc.) me use karte ho.
+User ke browser/app ke andar chalti hain.
+Example: user login kare, firestore se apna data fetch kare.
+Admin SDK
+Ye tum server side (Node.js server, backend API, Next.js server actions, Cloud Functions) pe use karte ho.
+Isme tumhe full access hota hai Firebase ke data par (jaise ek admin ko hota hai).
+Ye user ke liye nahi hota, balki tumhare backend code ke liye hota hai.
+🔹 “Add the Firebase Admin SDK to your server” ka matlab
+Matlab tum apne server code (Node.js / backend) me Firebase Admin SDK install aur configure karo taki:
+Tum secure tareeqe se Firebase ke data ko manage kar sako.
+Tum users create/delete/update kar sako.
+Tum sensitive kaam kar sako jo frontend pe safe nahi hote.
+----------------------------
+afterwards just putted some code of firebase into client and admin.ts and maded env file in which just puuted some private keys which we have to use for authentication and all
+-----------------
+BACKEND WALI FILE MERE ACCORDING AUTH_ACTION.TS ha
+------------------
+okay broo so i had did understood the firebase wala portion kch is tarah se k me btati hun jesy actions me jo auth_action.ts wali file ha usme backend ka code likha hua jo mjhy smjh agai ha or sath hi AuthAction.ts waaali file usme ba sonsubmit waalay ka litlle bit code likha hua jisme predeined functions hi use huye we han and its not a big deal to understand that part
+
+Your setup is doing two things:
+
+Client (React, browser) → talks to Firebase Auth (signup/signin, gets idToken)
+
+Server (Next.js API/server actions) → verifies/stores user in Firestore + manages session cookies
+
+🔑 The Backend File ("use server")
+import { db, auth } from "@/Firebase/admin"; // Firebase Admin SDK
+import { cookies } from "next/headers";      // Next.js cookies API
+
+const ONE_WEEK = 60 * 60 * 24 * 7; // 1 week in seconds
+
+
+Here,
+
+db → Firestore (database) instance from Firebase Admin SDK.
+
+auth → Admin Auth service (powerful, server-only, can read/write any user).
+
+cookies() → Next.js server API to set secure cookies.
+export async function signUp(params: SignUpParams) {
+export → so this function can be imported in other files.
+
+async → because it uses await (Firestore calls are asynchronous).
+
+SignUpParams → a TypeScript type/interface that defines what fields params must have.
+
+🔹 Destructuring Parameters
+ts
+Copy
+Edit
+const { uid, name, email, password } = params;
+Extracts values from the params object into separate variables.
+
+uid = user’s unique ID (probably from Firebase Auth).
+
+name, email, password = self-explanatory.
+
+🔹 Try-Catch Block
+This is to handle errors safely.
+
+Step 1: Check if user already exists
+ts
+Copy
+Edit
+const userRecord = await db.collection('users').doc(uid).get();
+if (userRecord.exists) {
+  return {
+    success: false,
+    messsage: 'User already exists. Please sign in instead',
+  };
+}
+db.collection('users') → points to the users collection in Firestore.
+
+.doc(uid).get() → fetches the document with the given uid.
+
+If it already exists → immediately return a failure response (user should sign in instead of signing up).
+
+Step 2: Create a new Firestore document
+ts
+Copy
+Edit
+await db.collection('users').doc(uid).set({
+  name,
+  email
+});
+Creates a new document with ID = uid.
+
+Stores only name and email.
+
+⚠️ password is not stored → this is good security practice (passwords are handled by Firebase Authentication, not Firestore).
+
+🔹 Error Handling
+ts
+Copy
+Edit
+} catch (e: any) {
+  console.error('Error creating user', e);
+
+  if (e.code === 'auth/email-already-exists') {
+    return { success: false, message: "Email already exists" };
+  }
+
+  return { success: false, message: "Failed to create an account" };
+}
+OKAY BROO SO THAT WAS THE FILE AUTH_ACTION.TS KA BASIC BASIC CONCEPT
+
+----------------------
+Imports jo Firebase Auth se related hain:
+import { auth } from "@/Firebase/client";
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+} from "firebase/auth";
+
+
+auth from "@/Firebase/client"`
+
+Ye tumhari Firebase Client SDK instance hai (browser me chalne wali).
+
+Client SDK ko tum apni app ke frontend me use karte ho users ko sign in/sign up karwane ke liye.
+
+Ye end-user ke browser me run hota hai, isiliye secure info (jaise service account keys) yahan nahi rakhi ja sakti.
+
+Example client.ts file kuch aisi hoti hai:
+
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+
+const firebaseConfig = { ... }; // tumhari client keys (public)
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+
+
+👉 Ye auth object client-side authentication ka entry point hai.
+
+createUserWithEmailAndPassword
+
+Ye Firebase Client SDK ka method hai.
+
+Jab user sign-up karta hai, to tum server ko directly request nahi bhejte.
+Instead, ye method Firebase ke authentication system ko directly hit karta hai aur ek naya account bana deta hai.
+
+Return karta hai ek userCredential jisme user.uid, user.email, waghera hota hai.
+
+signInWithEmailAndPassword
+
+Ye bhi Client SDK ka method hai.
+
+Jab user email & password enter karta hai, ye Firebase ke auth system ke against validate karta hai.
+
+Agar sahi hua to ek signed-in user object milta hai, jisme tum getIdToken() call karke ek JWT (ID Token) nikal sakti ho.
+
+🔹 onSubmit function ke andar Firebase ka kaam:
+if (type === "sign-up") {
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+
+Ye line browser (client) se Firebase ko direct request bhejti hai user banane ke liye.
+
+Agar successful hua, tumhe ek userCredential milta hai jisme uid hota hai.
+
+Fir tum backend (signUp action) ko call karte ho user ki extra info (jaise name) Firestore me save karne ke liye.
+
+👉 Yahan split of responsibility ho raha hai:
+
+Firebase Auth system (client SDK): credentials (email/password) se user banata hai.
+
+Tumhara backend (signUp action): us user ka extra data Firestore me save karta hai.
+
+} else {
+  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  const idToken = await userCredential.user.getIdToken();
+
+
+signInWithEmailAndPassword → user ko login karwa deta hai Firebase auth system me.
+
+getIdToken() → ek JWT (JSON Web Token) generate karta hai jo proof hai ke user Firebase ke saath authenticate hai.
+
+Is token ko tum backend pe bhejte ho:
+
+await signIn({ email, idToken });
+
+
+Aur backend (auth_action.ts) use karta hai firebase-admin SDK se session cookie banane ke liye.
+
+⚡ Important Concepts (Server vs Client):
+
+Client SDK (firebase/auth)
+
+Browser ke andar use hoti hai.
+
+User creation/login/logout karwa sakti hai.
+
+Tokens (idToken) nikal sakti hai.
+
+BUT: iske paas powerful methods nahi hote (e.g. getUserByEmail, deleteUser).
+
+Reason: Client pe sensitive powers dene ka matlab security risk.
+
+Admin SDK (firebase-admin/auth)
+
+Ye sirf server-side use hoti hai.
+
+Iske paas full power hoti hai users ko list, delete, verify, session cookies banane ki.
+
+Yahan tum ID Token verify karte ho jo client se aaya tha.
+
+👉 Tumhari file purely client-side hai, aur uska kaam hai:
+
+Firebase Auth (client SDK) se user create/login karna.
+
+JWT (ID Token) le aana.
+
+Backend ko bhejna (signUp ya signIn action ke zariye).
+
+Backend (Admin SDK) fir secure session handle karta hai.
+
+OKAY BRO SO THAT WAS SOME OF THE INFORMATION FROM AUTHFORM.TSX
+
+---------------------🔹 1. AuthForm.tsx (Client Side, React Component)
+
+                     Yahan use hota hai Firebase Client SDK (jo firebase/app aur firebase/auth se aata hai).
+                     Ye SDK browser ke andar chalne ke liye banaya gaya hai.
+
+                     Concepts Used:
+
+                     getAuth(app) → Firebase Client Auth instance banata hai.
+
+                     GoogleAuthProvider() → ek OAuth provider object banata hai jo Google sign-in handle karega.
+
+                     signInWithPopup(auth, provider) → ek client-side login flow chalata hai (popup khol ke user ko Google se authenticate karata hai).
+
+                     user.getIdToken() → ek Firebase ID Token generate karta hai (short-lived JWT jo proof hai ke user client par successfully sign in ho gaya).
+
+                     👉 Yahan tak ka kaam bas authentication UI aur login flow handle karna hai browser ke andar.
+                     Phir ye idToken server ko bheja jata hai taake server apna kaam kare.
+
+                     🔹 2. auth_actions.ts (Server Side, Next.js Server Action)
+
+                     Yahan use hota hai Firebase Admin SDK (jo firebase-admin se aata hai).
+                     Ye sirf server environment (Next.js server, Node.js backend) me hi chal sakta hai.
+
+                     Concepts Used:
+
+                     auth.getUserByEmail(email) → Admin SDK ka method jo server-side se Firebase Auth ke records read karta hai (client SDK se possible nahi).
+
+                     setSessionCookie(idToken) → Server-side par ek session cookie banayi jati hai Firebase Admin SDK ka use karke.
+
+                     Ye cookie long-lived hoti hai (7 days, etc.) aur server ko har request ke liye idToken dobara verify nahi karna padta.
+
+                     👉 Yahan ka kaam hai user verify karna + secure session maintain karna.
+------------------------
+NOW UNDERSTANDING CLIENT.TS UNDER FIREBASE FOLDER
+import { initializeApp,getApps,getApp } from "firebase/app";
+import { getAuth }  from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+firebase/app → tumhari frontend app ko Firebase ke saath connect karta hai.
+
+getAuth() → client-side Firebase Auth instance deta hai (login/signup/logout ke liye).
+
+getFirestore() → client-side Firestore instance deta hai (user ke browser se read/write karne ke liye).
+
+ts
+Copy
+Edit
+const app = !getApps.length ? initializeApp(firebaseConfig) : getApp();
+Ye line ensure karti hai ke Firebase dobara initialize na ho agar pehle se ho chuka hai (Next.js me hota hai hot reload ke wajah se).
+
+Agar pehle app initialize nahi hua → initializeApp(firebaseConfig)
+
+Agar already hua → getApp() (wahi use karo).
+
+ts
+Copy
+Edit
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+auth → client-side authentication ke liye (ye wahi hai jahan se tumne createUserWithEmailAndPassword aur signInWithEmailAndPassword use kiya).
+
+db → client-side Firestore database reference (agar tum browser se direct read/write karna chahti ho).
+-------------------
+OKAY SOO THIS THE AUTH.TS UNDER FIREBASE
+
+Perfect, yeh file Firebase Admin SDK use kar rahi hai.
+Let’s go step by step 👇
+
+1. Imports
+import { getApps, initializeApp, cert } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
+
+
+firebase-admin/app → Admin SDK ka app module (server-side app initialization ke liye)
+
+firebase-admin/firestore → Firestore ka Admin SDK interface (server se DB manage karne ke liye)
+
+firebase-admin/auth → Admin Auth SDK (server se users manage karne ke liye)
+
+⚡ Yahan client SDK ka koi role nahi hai. Ye sirf server-side Admin SDK hai.
+
+2. Function: initFirebaseAdmin
+const initFirebaseAdmin = () => {
+    const apps = getApps();
+    if(apps.length){
+        initializeApp({
+            credential: cert({
+                projectId: process.env.FIREBASE_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+            })
+        })
+    }
+
+
+getApps() → check karta hai ke koi Firebase app pehle se initialize hai ya nahi.
+
+Agar apps.length > 0 hai to iska matlab hai ek app pehle se chal raha hai. (But notice: tumhare code me condition galat hai → correct hona chahiye if (!apps.length) warna dobara init karega hi nahi 😅).
+
+initializeApp({...}) → Firebase Admin app initialize karta hai server ke liye.
+
+credential: cert({...}) → Firebase service account credentials set karta hai jo environment variables (process.env) se aa rahe hain. Ye server-only access deta hai (client ko expose nahi karte).
+
+⚡ Ye initialization sirf server pe hoti hai, client ke liye allowed nahi hai.
+
+3. Return object
+return {
+    auth: getAuth(),
+    db: getFirestore()
+}
+
+
+getAuth() → Firebase Admin Auth instance deta hai.
+
+Isse tum server-side users ko create/delete, verify tokens, etc. kar sakte ho.
+
+getFirestore() → Admin Firestore instance deta hai.
+
+Isse tum server se DB ko read/write/manage kar sakte ho bina client restrictions ke.
+
+4. Export
+export const { auth, db } = initFirebaseAdmin();
+
+
+Yahan destructuring ho rahi hai. Matlab auth aur db dono export ho rahe hain so ke dusre server files me import karke use kar sako.
+----------------
+just creating some new function getCurrentUser in auth_action.ts
+: Promise<User | null>
+
+Ye TypeScript ka return type annotation hai.
+
+Matlab ye function ek Promise return karega jo ya to:
+
+User object hoga, ya
+
+null hoga.
