@@ -590,3 +590,21 @@ Matlab ye function ek Promise return karega jo ya to:
 User object hoga, ya
 
 null hoga.
+------------------
+okay brooo so after doing authentication i just changed frontend and added vantabackground btw which is actually from tsparticles then i also changed color theme
+
+--------------
+now brooo had created some file for next interview page inside app > root >interview>page and also created agent.tsx and just written code in agent jo k video se hi dekh k basically abhi ba fronetend ka code likha ha
+---------------------
+google ai studio ki api key add ki ha or then vapi ko install kia ha using  npm install "@vapi-ai/web"
+or vapi ki public api key add ki ha then
+---------------------
+OKAY BROOO SO HERE I GOT BACKK ACHAAA TO AB THORA BHT CODE SMJH LETY HAIN TAAAKY OVERFLOW SAMJH AJAYE THORA OR HUM KOI BEHTAR DEVELOPER BANS AKYNNN OKAYYY SOOOIII DONOT LOSE YOUR INTEREST ITS YOUR TIME AND YOU HAVE TO WORK TO EARN SOMETHGING OR TO BUILD PROJECTS OR EVEN TO JUST INCREASE YOUR PRODUCTIVITY YOU HAVE TO SO THEN YOU HAVE TO WORK,,, NOTHING OTHER THAN THAT
+
+------------
+api-vapi-generate-route file banani ha or usme code likha ha basically ek request create ki ha jisk anadr hum kch ye ye chzen kar rahy hain POST request →
+                                                                      Client se job interview details leta hai (role, level, stack, type, amount, userid).
+ In details ko use karke AI (Google Gemini) ko prompt bhejta hai.
+                                                                     AI se interview questions generate karwata hai (JSON format me).
+                                                                     Un questions aur details ko Firestore database me save karta hai (interviews collection).
+                                                                      Client ko {success:true} return karta hai.

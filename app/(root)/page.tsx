@@ -12,9 +12,9 @@ const Page = () => {
             <main className="relative z-10 flex flex-col items-center min-h-screen text-white py-8">
                 <section className="card-cta">
                     <div className="flex flex-col gap-6 max-w-lg">
-                        <h2>Get Interview-Ready with AI-powered Practice & Feedback</h2>
+                        <h2>Boost Your Confidence with Smart AI Interview Prep</h2>
                         <p className="text-lg">
-                            Practice on real interview questions and get instant feedback
+                            Answer real-world interview questions and receive instant feedback
                         </p>
                         <Button asChild className="btn-primary max-sm:w-full">
                             <Link href="/interview">start an Interview</Link>
